@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <div class='triangle'>123</div>
+
+    <script>
+        var triangle = document.querySelector('.triangle');
+        // 补全代码
+        function generateTriangle(i) {
+            var str = '';
+            if (i > 1) {
+                for (var j = 1; j <= i; j++) {
+                    for (var t = 0; t < j; t++) {
+                        str += '*';
+                    }
+                    str += '<br>';
+                }
+                triangle.innerHTML = str;
+            } else {
+                console.log('please input an number greater than 1')
+            }
+
+
+
+        }
+        generateTriangle(3);
+    </script>
+</body>
+
+</html>

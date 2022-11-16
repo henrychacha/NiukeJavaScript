@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            color: #444;
+            text-align: center;
+        }
+ 
+        #app {
+            width: 20em;
+            height: 30em;
+            padding: 2em 1em;
+            margin: 10px;
+        }
+ 
+        .title {
+            text-align: center;
+            margin-bottom: 1em;
+        }
+ 
+        .name {
+            display: inline-block;
+            width: 4.5em;
+            text-align: justify;
+            text-align-last: justify;
+ 
+        }
+ 
+        .wrap {
+            margin-bottom: .4em;
+            font-size: 14px;
+            text-shadow: 0 .04em .06em rgba(0, 0, 0, .3);
+        }
+ 
+        .name+input {
+            margin-right: .3em;
+            border: .02em solid rgba(0, 0, 0, .1);
+            outline: none;
+            padding: .3em .3em;
+            height: 1.2em;
+            width: 14em;
+            border-radius: .2em;
+            box-shadow: .05em .05em .05em rgba(0, 0, 0, .1);
+            text-align: left;
+        }
+ 
+        .push-but {
+            margin-top: 3em;
+            border: 1px solid rgba(0, 0, 0, .1);
+            padding: .6em 5em;
+            color: white;
+            background: rgb(46, 163, 199);
+            border-radius: .2em;
+            outline: none;
+        }
+ 
+        .red-packet {
+            position: fixed;
+            top: 6em;
+            width: 20em;
+            height: 30em;
+            background: rgb(134, 46, 31);
+            border-radius: .4em;
+            overflow: hidden;
+        }
+ 
+        .top-background {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%);
+            height: 20em;
+            width: 20em;
+            border-radius: .4em .4em 40% 40%/.4em .4em 10% 10%;
+            background: rgb(182, 63, 42);
+            box-shadow: 0 .15em .25em rgba(0, 0, 0, .2);
+            z-index: -1;
+            transition: top .5s;
+        }
+ 
+        .shade {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, .5);
+        }
+ 
+        .red-packet-wrap {
+            width: 100%;
+            height: 100%;
+            padding: 2em 2em;
+            box-sizing: border-box;
+        }
+ 
+        .close {
+            position: absolute;
+            top: 2%;
+            right: 5%;
+            font-size: 30px;
+            font-weight: bolder;
+            transform: rotate(45deg);
+            color: rgba(22, 21, 21, 0.562);
+        }
+ 
+        .red-packet-wrap>img {
+            border-radius: 50%;
+            height: 5em;
+            width: 5em;
+        }
+ 
+        .people-name {
+            color: white;
+            margin: .4em 0;
+            font-size: 26px;
+        }
+ 
+        .loading-warp>.title {
+            color: rgb(165, 140, 140);
+            font-weight: bold;
+            font-size: 15px;
+            letter-spacing: .1em;
+        }
+ 
+        .loading-warp>.wish {
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            white-space: pre;
+            letter-spacing: .1em;
+        }
+ 
+        .icon-packet {
+            position: absolute;
+            top: 13.5em;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 20px;
+            letter-spacing: .05em;
+            width: 5em;
+            line-height: 5em;
+            border-radius: 50%;
+            background: rgb(243, 154, 82);
+            box-shadow: 0 .15em .25em rgba(0, 0, 0, .2);
+            text-shadow: 0 .05em .25em rgba(0, 0, 0, .2);
+            border: none;
+        }
+ 
+        @keyframes openRotate {
+            to {
+                transform: translateX(-50%) rotateY(360deg);
+            }
+        }
+ 
+        .rotate {
+            transition: transform 1s;
+            transform-origin: center;
+            animation: openRotate 1s 2;
+        }
+ 
+        .cur-money {
+            color: #fff;
+            font-size: 30px;
+            margin: .8em 0;
+        }
+ 
+        .rank {
+            color: #fff;
+            letter-spacing: .05em;
+            margin-bottom: .7em;
+        }
+ 
+        .rank-list {
+            width: 15em;
+            height: 13em;
+            background: pink;
+            margin: auto;
+            border-radius: .5em;
+            background: rgba(248, 233, 94, 0.1);
+            border: .17em solid hsla(0, 100%, 100%, .1);
+            padding: .1em 1em;
+            box-sizing: border-box;
+            font-size: 15px;
+            overflow: auto;
+        }
+ 
+        .rank-list>p {
+            color: #fff;
+            text-align: left;
+        }
+ 
+        .lucky {
+            display: inline-block;
+            color: yellow;
+            margin-left: 1em;
+        }
+    </style>
+</head>
+ 
+<body>
+    <div id="app">
+        <h1 class="title">红包模拟器</h1>
+ 
+        <div class="wrap">
+            <span class="name">红包个数:</span>
+            <input type="text" id="packet-count" value="1">个
+        </div>
+        <div class="wrap">
+            <span class="name">总金额:</span>
+            <input type="text" id="packet-money" value="1">元
+        </div>
+ 
+        <button class="push-but">发红包</button>
+ 
+        <!-- 红包部分 -->
+        <div class="shade" style="display: none;"></div>
+        <div class="red-packet" style="display: none;">
+            <div class="top-background"></div>
+            <div class="red-packet-wrap">
+                <span class="close">+</span>
+                <img src="http://s3a.pstatp.com/cg_growth/resource/boilerplate/images/redpacket/avatar.png" alt="">
+                <div class="loading-warp">
+                    <p class="people-name">JScoder</p>
+                    <p class="title">给你发了一个红包</p>
+                    <p class="wish">恭喜发财 大吉大利</p>
+                    <button class="icon-packet">拆红包</button>
+                </div>
+                <div class="packet-info" style="display: none;">
+                    <p class="cur-money">3.01</p>
+                    <p class="rank">红包领取榜</p>
+                    <div class="rank-list">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // 打开红包页面
+        let pushButDom = document.querySelector(".push-but");
+        pushButDom.addEventListener("click", openThePop, false);
+ 
+        // 关闭红包弹出页面
+        let closeDom = document.querySelector(".close");
+        closeDom.addEventListener("click", closeThePop, false);
+ 
+        // 拆红包
+        let iconPacketDom = document.querySelector('.icon-packet');
+        iconPacketDom.addEventListener("click", openThePacket, false)
+ 
+        // 关闭红包弹出页面方法
+        function closeThePop() {
+            let redPacketDom = document.querySelector(".red-packet");
+            let shadeDom = document.querySelector(".shade");
+            redPacketDom.style = "display:none";
+            shadeDom.style = "display:none";
+            init();
+        }
+ 
+        //打开红包页面方法
+        function openThePop() {
+            let redPacketDom = document.querySelector(".red-packet");
+            let shadeDom = document.querySelector(".shade");
+            let loadingWarpDom = document.querySelector('.loading-warp');
+            redPacketDom.style = "display:visible";
+            shadeDom.style = "display:visible";
+            loadingWarpDom.style = "display:visible;"
+        }
+ 
+        // 拆红包方法
+        function openThePacket() {
+            let iconPacketDom = document.querySelector('.icon-packet');
+            iconPacketDom.disabled = "disabled";
+ 
+            iconPacketDom.className += ' rotate';
+            setTimeout(showPacketInfo, 2000);
+        }
+ 
+        //显示红包内部信息
+        function showPacketInfo() {
+            let loadingWarpDom = document.querySelector('.loading-warp');
+            let topBackgroundDom = document.querySelector('.top-background');
+            let iconPacketDom = document.querySelector('.icon-packet');
+            loadingWarpDom.style = "display:none;"
+            topBackgroundDom.style = "top:-52%;"
+            iconPacketDom.className = 'icon-packet';
+            iconPacketDom.disabled = null;
+            setTimeout(delayShow, 400);
+        }
+ 
+        //延迟显示内容方法
+        function delayShow() {
+            let packetInfoDom = document.querySelector('.packet-info');
+            packetInfoDom.style = "display:visible;";
+            getMoneyList();
+        }
+ 
+        //获得红包金额列表
+        function getMoneyList() {
+            let packetCount = document.querySelector('#packet-count');
+            let packetMoney = document.querySelector('#packet-money');
+            let allCount = packetCount.value;
+            let allMoney = packetMoney.value;
+            let moneyList = [];
+ 
+            for (let i = 0, len = allCount; i < len - 1; i++) {
+                let money = getMoneyItem(allCount, allMoney);
+                allCount--;
+                allMoney -= money;
+                moneyList.push(money); console.log(allCount);
+            }
+            moneyList.push(Number(allMoney).toFixed(2));
+ 
+            //获得该用户的金额
+            let ownMoneyDom = document.querySelector(".cur-money");
+            let index = Math.floor(Math.random() * moneyList.length);
+            ownMoneyDom.innerHTML = moneyList[index];
+ 
+            createMoneyNode(moneyList);
+        }
+ 
+ 
+        //获得单个用户领取金额
+        function getMoneyItem(allCount, allMoney) {
+            let avg = Number(allMoney) / Number(allCount);
+            let money = (Math.random() * 2 * avg + 0.01).toFixed(2);
+ 
+            return money;
+        }
+ 
+        // 创建红包列表节点并挂上去
+        function createMoneyNode(moneyList) {
+            let fragment = document.createDocumentFragment();
+            let moneyListDom = document.querySelector('.rank-list');
+            let luckyNode = document.createElement("span");
+            let maxItem = Math.max(...moneyList);
+            luckyNode.className = "lucky";
+            luckyNode.innerHTML = "手气最佳";
+ 
+            for (let i = 0; i < moneyList.length; i++) {
+                let moneyNode = document.createElement("p");
+                moneyNode.innerHTML = `用户${i + 1}：${moneyList[i]}`;
+                fragment.appendChild(moneyNode);
+                console.log(maxItem==moneyList[i]);
+                if(maxItem == moneyList[i]) {
+                    moneyNode.appendChild(luckyNode);
+                }
+            }
+ 
+            moneyListDom.appendChild(fragment);
+        }
+ 
+        //初始化
+        function init() {
+            let packetCount = document.querySelector('#packet-count');
+            let packetMoney = document.querySelector('#packet-money');
+            let loadingWarpDom = document.querySelector('.loading-warp');
+            let topBackgroundDom = document.querySelector('.top-background');
+            let packetInfoDom = document.querySelector('.packet-info');
+            let moneyListDom = document.querySelector('.rank-list');
+ 
+            packetCount.value = 1;
+            packetMoney.value = 1;
+            loadingWarpDom.style = "display:none;"
+            topBackgroundDom.style = "top:0;"
+            packetInfoDom.style = "display:none;";
+            moneyListDom.innerHTML = "";
+        }
+    </script>
+</body>
+ 
+</html>

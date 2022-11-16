@@ -1,0 +1,187 @@
+<!-- 太沙雕了，写了一个小时，支持多图片 -->
+<!DOCTYPE html>
+<html lang="en">
+  
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+        }
+  
+        .wrap {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+  
+        .upload {
+            width: 668px;
+            height: 608px;
+            border-radius: 5px;
+            background: #fff;
+            border: 1px solid #ccc;
+        }
+  
+        .title {
+            height: 50px;
+            border-bottom: 1px solid #ccc;
+        }
+  
+        .title-name {
+            margin-left: 25px;
+            float: left;
+            font-size: 15px;
+            line-height: 50px;
+            color: red;
+        }
+  
+        .title-close::before {
+            content: "\2716";
+            color: #ccc;
+        }
+  
+        .title-close {
+            height: 50px;
+            margin-right: 25px;
+            display: flex;
+            float: right;
+            align-items: center;
+        }
+  
+        .content {
+            height: 458px;
+            overflow: auto;
+        }
+  
+        .content-item {
+            width: 110px;
+            height: 110px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            float: left;
+        }
+  
+        .content-item-upload {
+            width: 110px;
+            height: 110px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            float: left;
+            position: relative;
+            cursor: pointer;
+            color: #888;
+            background: url('https://p1.pstatp.com/large/3ecd0004b6bdeff4c48d');
+            background-repeat: no-repeat;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            *display: inline;
+            *zoom: 1
+        }
+  
+        .content-item-upload input {
+            position: absolute;
+            font-size: 100px;
+            right: 0;
+            top: 0;
+            opacity: 0;
+            filter: alpha(opacity=0);
+            cursor: pointer
+        }
+  
+        .footer {
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+  
+        .btn {
+            width: 85px;
+            margin: 0 10px;
+            border: 1px solid #ccc;
+            padding: 10px 10px;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 12px;
+        }
+  
+        .btn-red {
+            background-color: red;
+            border: 1px solid red;
+            color: white;
+        }
+    </style>
+</head>
+  
+<body>
+    <div class="wrap">
+        <div class="upload">
+            <div class="title">
+                <div class="title-name">上传图片</div>
+                <div class="title-close"></div>
+            </div>
+            <div class="content" id='upload-list'>
+                <div class="content-item"><img width="110px" height="110px" src="" /></div>
+            </div>
+            <div class="footer">
+                <button class="btn btn-red" onclick="upload()">上传</button>
+                <button class="btn">取消</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const render = renderList => {
+            let documentText = ''
+            renderList.forEach(e => {
+                documentText = documentText +
+                    `<div class="content-item"><img width="110px" height="110px" src="${e.img}"/></div>`
+            })
+            documentText = documentText +
+                `<a href="javascript:;" class="content-item-upload">
+                    <input id="file-upload" type="file" accept="image/png,image/gif" name="file"/>
+                </a>`
+            document.getElementById('upload-list').innerHTML = documentText
+            document.getElementById('file-upload').addEventListener('change', function () {
+                var file = this.files[0];
+                var reader = new FileReader();
+                let res = reader.readAsDataURL(file);
+                reader.onloadend = e => {
+                    console.log(e.target.result)
+                    inputList.push({
+                        img: e.target.result
+                    })
+                    render(inputList)
+                }
+            })
+        }
+        const upload = () => {
+            uploadList.forEach(e => {
+                let formData = new FormData();
+                formData.append("img", e);
+                fetch("https://mp.toutiao.com/profile_v2/", {
+                    method: 'POST',
+                    body: formData
+                });
+            })
+  
+        }
+        var inputList = []
+        var uploadList = []
+  
+        window.onload = () => {
+            render(inputList)
+        }
+    </script>
+</body>
+  
+</html>
